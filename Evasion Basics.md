@@ -1,4 +1,3 @@
-#INE #WebHacking #eWPTX 
 # Base64 Encoding Evasion
 
 A maioria dos sistemas de detecção utilizam o regex para encontrar palavras maliciosas. Imaginando que quero evadir de um sistema que procura pelas palavras: eval, alert, prompt, document.cookie
@@ -32,7 +31,7 @@ Utilizado principalmente para engenharia social, mas também pode ser usado em a
 
 Utilizado para encurtar a url, pode-se usar soluções prontas ou criar a sua própria solução
 
-https://yourls.org/  -> Solução Open Source
+https://yourls.org/  -> Solução Open Source <br>
 https://bitly.com/   -> Solução paga
 
 *colocando um '+' ao fim da url encurtada pelo bitly, é possível descobrir mais informações sobre o verdadeiro link*
@@ -70,7 +69,7 @@ http://www.google.com@hack.me/xss
 
 É possível usar caracteres unicode para deixar a url ainda mais convincente
 
-![[Pasted image 20231226160208.png]]
+![](https://github.com/SQU4NCH/eWPTX-Study-Notes/blob/main/Imagens/Pasted%20image%2020231226160208.png)
 
 *Navegadores como o Firefox e o Opera, avisam o usuário final do redirecionamento. Já o Chrome não avisa nada*
 
