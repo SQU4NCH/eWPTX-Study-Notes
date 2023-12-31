@@ -92,3 +92,105 @@ Também é possível criar um endereço híbrido, mesclando dois ou mais formato
 Ferramenta para ajudar na conversão de formatos:
 
 https://www.silisoftware.com/tools/ipconverter.php
+
+# JavaScript Obfuscation Techiques
+
+Existe várias formas de realizar encoding com JavaScript, uma das formas mais interessantes é utilizando uma técnica chamada "Non-alphanumeric". Basicamente essa técnica consiste em utilizar encodes com caracteres não alfa numéricos
+## String Casting
+
+No JavaScript é possível criar variáveis da seguinte forma:
+```JavaScript
+"" + 1234 or 1234 + ""  // Retorna "1234"
+[] + 1234 or 1234 + []  // Retorna "1234"
+
+x = "hello"
+[1,"a",x]              // Retorna [1, "a", "hello"]
+[1,"a",x]+""           // Retorna "1,a,hello"
+```
+
+**Booleans**
+
+| False | True |
+| --- | --- |
+| !\[] | !!\[] |
+| !{} | !!{} |
+| !!"" | !"" |
+| \[]\=={} | \[]\=="" |
+
+Por exemplo, para retornar a string "true" ou "false", pode-se usar os exemplos acima
+```JavaScript
+[!![]]+""     // Retorna "true"
+[![]]+""      // Retorna "false"
+```
+
+Também é possível criar números, por exemplo, o 0 pode ser criado da seguinte forma:
+```Javascript
++""
+-""
+-+-+""
++[]
+-[]
+-+-+[]
+![]+![]
+![]+!{}
+![]+!!""
+```
+
+True é igual a 1, False é igual a 0. Com isso é possível gerar o número 1 usando TRUE+FALSE e 2 usando TRUE+TRUE
+
+| Number | Non-alphanumeric representations |
+| ---- | ---- |
+| 0 | +\[] , +"" , !\[]+!\[] |
+| 1 | +!!\[] , !\[]+!"" , !\[]+!!\[] , ~\[]\*~\[] , ++\[\[]]\[+\[]] |
+| 2 | !!\[]+!!\[] , ++\[++\[\[]]\[+\[]]]\[+\[]] |
+| 3 | !!\[]+!!\[]+!!\[] |
+| 4 | !!\[]+!!\[]+!!\[]+!!\[] , (!!\[]+!!\[])\*(!!\[]+!!\[]) |
+| 5 | !!\[]+!!\[]+!!\[]+!!\[]+!!\[] |
+### Generate 'alert' string
+
+Para gerar uma palavra é preciso usar um output nativo do JavaScript e extrair o caractere desejado. por exemplo:
+```JavaScript
+_={}+[]      // é "[object Object]"
+[]/[]+""     // é "NaN"
+!![]/![]+""  // é "Infinity"
+```
+
+Então, para extrair p caractere "a" podemos usar o NaN e acessar a posição 1
+
+```JavaScript
+([]/[]+"")[![]+!![]]    // "a"
+\________/\________/
+     |         |
+   "NaN"       1
+```
+
+O restante pode ser gerado usando as seguintes mensagens:
+
+| | |
+| ---- | ---- |
+| l | fa**L**se |
+| e | tru**E**, fals**E** ou \[obj**E**ct Obj**E**ct] |
+| r | t**R**ue |
+| t | **T**rue ou infini**T**y |
+
+Existem algumas ferramentas baseadas nessas técnicas
+
+https://utf-8.jp/public/jjencode.html <br>
+https://utf-8.jp/public/aaencode.html <br>
+https://jsfuck.com
+## JavaScript Compressing
+
+**Minifying**
+
+O processo de "minifying" no código JavaScript consiste em remover todos os caracteres desnecessários do código sem alterar a funcionalidade original. Basicamente todos os caracteres que são utilizados para deixar o código mais legível são removidos. 
+
+https://developers.google.com/closure/compiler/ <br>
+https://yui.github.io/yuicompressor/  <br>
+https://www.crockford.com/jsmin.html <br>
+http://dean.edwards.name/packer/ 
+
+**Packing**
+
+O "packing" comprime o código gerado com o minifying encurtando os nomes de variáveis, funções e outras operações. A ideia é deixar o código ilegível
+
+http://dean.edwards.name/packer/
