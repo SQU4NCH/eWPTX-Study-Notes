@@ -194,3 +194,69 @@ http://dean.edwards.name/packer/
 O "packing" comprime o código gerado com o minifying encurtando os nomes de variáveis, funções e outras operações. A ideia é deixar o código ilegível
 
 http://dean.edwards.name/packer/
+
+# PHP Obfuscation Techiques
+
+Assim como o JavaScript, o PHP é uma linguagem de tipagem dinâmica. Isso permite fazer coisas como **Type Juggling**. Basicamente no PHP o tipo da variável é determinado pelo contexto
+```php
+$joke = '1';                                          // string(1) "1"
+$joke++;                                              // int(2)
+$joke += 19.8;                                        // float(21.8)
+$joke = 8 + "7 -Ignore me please-";                   // int(15)
+$joke = "a string" + array("1.1 another string")[0];  // float(1.1)
+$joke = 3+2*(TRUE+TRUE);                              // int(7)
+$joke .= '';                                          // string(1) "7"
+$joke +='';                                           // int(7)
+```
+
+## Numerical Data Types
+
+Com o tipo de dado numérico é possível acessar elementos dentro de uma string ou de um array
+
+```PHP
+$x='Giuseppe';
+echo $x[0];        // decimal index (0)      > 'G'
+echo $x[0001];     // octal index (1)        > 'i'
+echo $x[0x02];     // hexadecimal index (2)  > 'u'
+echo $x[0b11];     // binary index (3)       > 's'
+```
+
+O seguinte exemplo também é válido:
+```PHP
+$x='Giuseppe';
+echo $x[0];               // decimal index (0)      > 'G'
+echo $x[00000000001];     // octal index (1)        > 'i'
+echo $x[0x000000002];     // hexadecimal index (2)  > 'u'
+echo $x[0b000000011];     // binary index (3)       > 's'
+```
+
+Também é possível usando números de ponto flutuante
+```PHP
+$x='Giuseppe';
+echo $x[0.1];                   // floating (0.1) casted to 0                  > 'G'
+echo $x[.1e+1];                 // exponencial                                 > 'i'
+echo $x[0.2E+0000000000001];    // long exponencial                            > 'u'
+echo $x[1e+1-1E-1-5.999];       // exponencial e floating (3.901) casted to 3  > 's'
+```
+
+Exemplo gerando números "exóticos"
+```PHP
+$x='Giuseppe';
+echo $x[FALSE];                      // FALSE é 0                  > 'G'
+echo $x[TRUE];                       // TRUE é 1                   > 'i'
+echo $x[count('hello')+true];        // count(object) é 1          > 'u'
+echo $x["7rail"+"3er"-TRUE^0xA];     // PHP ignore trailing data   > 's'
+```
+
+É possível combinar o exemplo acima com as funcionalidades de casting do PHP provides:
+```PHP
+$x='Giuseppe';
+echo $x[(int)"a common string"];            // 0                            > 'G'
+echo $x[(int)!0];                           // True (1)                     > 'i'
+echo $x[(int)"2+1"];                        // 2                            > 'u'
+echo $x[(float)"3,11"];                     // 3                            > 's'
+echo $x[boolval(['.'])+(float)(int)array(0)+floatval('2.1+1.2=3.3')];
+                                           // True(1)+1+2.1 = 4.2 (float)  > 'e'
+```
+## String Data Types
+
