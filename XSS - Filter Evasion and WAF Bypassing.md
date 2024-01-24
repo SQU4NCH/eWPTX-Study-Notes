@@ -1,8 +1,6 @@
- #INE #WebHacking #eWPTX 
-
 Os dois principais cheat sheet para XSS:
 
-https://html5sec.org/
+https://html5sec.org/ <br>
 https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html
 
 # Bypassing Blacklisting Filters
@@ -101,7 +99,7 @@ Android = [0x09,0x20,0x28,0x2C,0x3B]
 
 Como os browsers estão em constante mudança, existe uma ferramenta que realiza o fuzzing para descobrir os caracteres que podem ser usados de acordo com a versão do browser
 
-http://shazzer.co.uk/vector/Characters-allowed-after-attribute-name
+http://shazzer.co.uk/vector/Characters-allowed-after-attribute-name <br>
 http://shazzer.co.uk/vector/Characters-allowed-brfote-attribute-name
 
 ## Keyword Based Filters
