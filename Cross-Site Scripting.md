@@ -227,4 +227,29 @@ Também é possível criar um keylogging usando ferramentas como:
 
 ### Keylogging with Mtasploit
 
+O metasploit possui o módulo auxiliar "http_javascript_keylogger", que é um script mais avançado que o mostrado acima. Ele cria o payload para ser injetado na página vulnerável
+
+Ele também tem a opção de criar uma página demo para teste usando o:
+```
+set DEMO true
+```
+### Keylogging with BeEF
+
+O **Event Logger** do BeEF é uma versão melhorada dos exemplos acima, pois ele consegue mostrar teclas especiais. Para entender a diferença, vamos imaginar que um usuário tem o login e senha iguais, então ele escreve o login copia e cola no campo de senha, normalmente no keylogger veríamos somente as teclas: acv.
+
+Já com o BeEF conseguimos ver \[Ctrl] a - \[Ctrl] c - \[Ctrl] v
+## Network Attacks
+
+Com XSS é possível descobrir informações da rede interna explorando o navegador da vitima
+### IP Detection
+
+Antes de realizar qualquer atividade na rede interna, é interessante levantar informações sobre o ambiente, como por exemplo IPs da rede interna
+
+Existe uma abordagem usada para isso que utiliza o WebRTC do HTML5 para descobrir o endereço de IP local. Uma POC dessa técnica está aqui: http://net.ipcalf.com
+
+Outra POC também foi criada adicionando algumas informações a mais, e pode ser encontrada aqui: https://web.archive.org/web/20160406083801/https://dl.dropboxusercontent.com/u/1878671/enumhosts.html
+
+Essa técnica não funciona em todos os navegadores, para saber se o navegador alvo pode executar essa funcionalidade você pode fazer uma consulta aqui: http://caniuse.com/#feat=rtcpeerconnection
+
+Ainda é possível realizar outras atividades como: descobrir hosts na rede, enumerar portas abertas nos hosts, entre outros. Porém as técnicas utilizadas variam bastante quanto a certeza do resultado
 
