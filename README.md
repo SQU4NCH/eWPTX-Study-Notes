@@ -8,3 +8,4 @@ Anotações e resumos dos meus estudos pessoais de preparação para a eWPTX
 [Evasion Basics](https://github.com/SQU4NCH/eWPTX-Study-Notes/blob/main/Evasion%20Basics.md)<br>
 [Cross-Site Scripting](https://github.com/SQU4NCH/eWPTX-Study-Notes/blob/main/Cross-Site%20Scripting.md)<br>
 [XSS - Filter Evasion and WAF Bypassing](https://github.com/SQU4NCH/eWPTX-Study-Notes/blob/main/XSS%20-%20Filter%20Evasion%20and%20WAF%20Bypassing.md)<br>
+[Cross-Site Request Forgery](https://github.com/SQU4NCH/eWPTX-Study-Notes/blob/main/Cross-Site%20Request%20Forgery.md)<br>
