@@ -1,5 +1,3 @@
-#INE #WebHacking #eWPTX 
-
 # CSRF: Recap & More
 
 O ataque de CSRF permite explorar a relação de confiança entre a aplicação web e as requisições HTTP feitas pelo usuário. 
